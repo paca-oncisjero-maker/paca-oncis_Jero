@@ -27,6 +27,23 @@ def say_hello():
         "message": f"Hello, {name}!"
     })
 
+@app.route('/about')
+def about():
+    return jsonify({
+        "api_name": "My First API",
+        "description": "A simple Flask REST API",
+        "developer": "Jero Paca-oncis",
+        "version": "1.0"
+    })
+
+@app.route('/jero')
+def say_jero():
+    name = request.args.get('name', 'Student')
+
+    return jsonify({
+        "message": f"Gwapo si, {name}!"
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
