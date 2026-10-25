@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Student API Interface</title>
+    <title>Student Database API Interface</title>
 
     <style>
         * {
@@ -13,8 +12,8 @@
 
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
+            max-width: 900px;
+            margin: 35px auto;
             padding: 20px;
             background: #f3f6fa;
             color: #263238;
@@ -23,19 +22,15 @@
         header {
             background: #174a7e;
             color: white;
-            padding: 25px;
             text-align: center;
+            padding: 25px;
             border-radius: 12px;
             margin-bottom: 25px;
         }
 
-        header h1 {
-            margin-top: 0;
-        }
-
         .card {
             background: white;
-            padding: 25px;
+            padding: 24px;
             margin-bottom: 22px;
             border-radius: 12px;
             box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
@@ -47,14 +42,13 @@
         }
 
         button {
-            padding: 12px 18px;
+            padding: 11px 16px;
+            margin-top: 10px;
             background: #1769aa;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 12px;
-            font-size: 14px;
         }
 
         button:hover {
@@ -62,61 +56,53 @@
         }
 
         input {
-            padding: 12px;
             width: 100%;
             max-width: 400px;
+            padding: 11px;
+            margin-top: 8px;
             border: 1px solid #bbb;
             border-radius: 6px;
-            margin-top: 8px;
-            font-size: 14px;
         }
 
-        #result,
-        #greeting,
-        #customResult {
-            margin-top: 18px;
-            padding: 15px;
+        .output {
+            margin-top: 16px;
+            padding: 14px;
             background: #f5f8fc;
             border: 1px solid #dce4ee;
             border-radius: 7px;
             overflow-wrap: anywhere;
         }
 
-        #result:empty,
-        #greeting:empty,
-        #customResult:empty {
+        .output:empty {
             display: none;
         }
 
-        .info {
+        .student {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
             line-height: 1.8;
         }
 
-        pre {
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            margin: 0;
+        .student:last-child {
+            border-bottom: none;
         }
 
         footer {
             text-align: center;
             color: #666;
-            margin-top: 30px;
             font-size: 13px;
+            margin-top: 30px;
         }
 
         @media (max-width: 600px) {
             body {
-                margin: 15px auto;
+                margin: 10px auto;
                 padding: 12px;
             }
 
             .card {
-                padding: 18px;
-            }
-
-            header {
-                padding: 20px 12px;
+                padding: 17px;
             }
         }
     </style>
@@ -124,201 +110,323 @@
 
 <body>
 
-    <header>
-        <h1>Student API Interface</h1>
-        <p>Flask API and JavaScript Fetch Demo</p>
-        <p>Laboratory Activity 6</p>
-    </header>
+<header>
+    <h1>Student Database API Interface</h1>
+    <p>Flask API and SQLite Database</p>
+    <p>Laboratory Activity 7</p>
+</header>
 
-    <!-- Student Information -->
-    <section class="card">
-        <h2>Student Information</h2>
+<!-- Student Information -->
+<section class="card">
+    <h2>Student Information</h2>
+    <p>Retrieve your student information from the database.</p>
 
-        <p>
-            Click the button below to retrieve your student information
-            from the Flask API.
-        </p>
+    <button onclick="loadStudent()">Load Student Information</button>
+    <div id="result" class="output" aria-live="polite"></div>
+</section>
 
-        <button onclick="loadStudent()">
-            Load Student Information
-        </button>
+<!-- Greeting API -->
+<section class="card">
+    <h2>Greeting API</h2>
+    <input
+        type="text"
+        id="nameInput"
+        placeholder="Enter your first name"
+    >
+    <br>
+    <button onclick="sayHello()">Say Hello</button>
+    <div id="greeting" class="output" aria-live="polite"></div>
+</section>
 
-        <div id="result" class="info" aria-live="polite"></div>
-    </section>
+<!-- Custom API -->
+<section class="card">
+    <h2>Custom API Endpoint</h2>
+    <input
+        type="text"
+        id="customInput"
+        placeholder="Enter your first name"
+    >
+    <br>
+    <button onclick="loadCustom()">Test Custom API</button>
+    <div id="customResult" class="output" aria-live="polite"></div>
+</section>
 
-    <!-- Greeting API -->
-    <section class="card">
-        <h2>Greeting API</h2>
+<!-- All Database Students -->
+<section class="card">
+    <h2>Students from Database</h2>
+    <p>Load all student records stored in students.db.</p>
 
-        <p>Enter your first name to receive a greeting.</p>
+    <button onclick="loadStudents()">Load Students</button>
+    <div id="studentList" class="output" aria-live="polite"></div>
+</section>
 
-        <input
-            type="text"
-            id="nameInput"
-            placeholder="Enter your first name"
-        >
+<!-- Find One Student -->
+<section class="card">
+    <h2>Find Student by Database ID</h2>
+    <p>Enter a database ID, such as 1 or 2.</p>
 
-        <br>
+    <input
+        type="number"
+        id="studentDbId"
+        min="1"
+        step="1"
+        placeholder="Enter database ID"
+    >
+    <br>
+    <button onclick="findStudent()">Find Student</button>
+    <div id="singleStudent" class="output" aria-live="polite"></div>
+</section>
 
-        <button onclick="sayHello()">Say Hello</button>
+<!-- Additional Task -->
+<section class="card">
+    <h2>Filter Students by Program</h2>
+    <p>Retrieve student records for a selected program.</p>
 
-        <p id="greeting" aria-live="polite"></p>
-    </section>
+    <input
+        type="text"
+        id="programInput"
+        value="BSIT"
+        placeholder="Enter program, e.g. BSIT"
+    >
+    <br>
+    <button onclick="filterStudents()">Search Program</button>
+    <div id="programResults" class="output" aria-live="polite"></div>
+</section>
 
-    <!-- Custom API Endpoint -->
-    <section class="card">
-        <h2>Custom API Endpoint</h2>
+<footer>
+    <p>Created by JERO PACA-ONCIS | BSIT 3 - DIJKSTRA</p>
+    <p>Laboratory Activity 7</p>
+</footer>
 
-        <p>
-            Test your custom API endpoint from your previous laboratory
-            activities.
-        </p>
+<script>
+    // Display fields safely
+    function addField(container, label, value) {
+        const p = document.createElement("p");
+        const strong = document.createElement("strong");
 
-        <input
-            type="text"
-            id="customInput"
-            placeholder="Enter your first name"
-        >
+        strong.textContent = label + ": ";
+        p.appendChild(strong);
+        p.appendChild(document.createTextNode(value ?? ""));
+        container.appendChild(p);
+    }
 
-        <br>
+    // Student Information
+    async function loadStudent() {
+        const output = document.getElementById("result");
+        output.textContent = "Loading student information...";
 
-        <button onclick="loadCustom()">Test Custom API</button>
+        try {
+            const response = await fetch("/student");
 
-        <div id="customResult" aria-live="polite"></div>
-    </section>
-
-    <footer>
-        <p>Created by JERO PACA-ONCIS | BSIT 3 - DIJKSTRA</p>
-    </footer>
-
-    <script>
-        // Load Student Information
-        async function loadStudent() {
-            const result = document.getElementById("result");
-
-            result.textContent = "Loading student information...";
-
-            try {
-                const response = await fetch("/student");
-
-                if (!response.ok) {
-                    throw new Error("Failed to retrieve student data.");
-                }
-
-                const data = await response.json();
-
-                result.replaceChildren();
-
-                const fields = [
-                    ["Student ID", data.student_id],
-                    ["Name", data.name],
-                    ["Program", data.program],
-                    ["Year", data.year],
-                    ["Section", data.section]
-                ];
-
-                fields.forEach(function (field) {
-                    const paragraph = document.createElement("p");
-                    const label = document.createElement("strong");
-
-                    label.textContent = field[0] + ": ";
-
-                    paragraph.appendChild(label);
-                    paragraph.appendChild(
-                        document.createTextNode(
-                            field[1] ?? ""
-                        )
-                    );
-
-                    result.appendChild(paragraph);
-                });
-
-            } catch (error) {
-                result.textContent =
-                    "Unable to retrieve student information.";
+            if (!response.ok) {
+                throw new Error("Request failed");
             }
+
+            const data = await response.json();
+            output.replaceChildren();
+
+            [
+                ["Student ID", data.student_id],
+                ["Name", data.name],
+                ["Program", data.program],
+                ["Year", data.year],
+                ["Section", data.section]
+            ].forEach(field => addField(output, field[0], field[1]));
+
+        } catch (error) {
+            output.textContent = "Unable to retrieve student information.";
+        }
+    }
+
+    // Greeting API
+    async function sayHello() {
+        const name = document.getElementById("nameInput").value.trim();
+        const output = document.getElementById("greeting");
+
+        if (!name) {
+            output.textContent = "Please enter your first name.";
+            return;
         }
 
+        output.textContent = "Loading greeting...";
 
-        // Greeting API
-        async function sayHello() {
-            const name = document
-                .getElementById("nameInput")
-                .value
-                .trim();
+        try {
+            const response = await fetch(
+                "/hello?name=" + encodeURIComponent(name)
+            );
 
-            const greeting = document.getElementById("greeting");
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
 
-            if (!name) {
-                greeting.textContent =
-                    "Please enter your first name.";
+            const data = await response.json();
+            output.textContent = data.message;
+
+        } catch (error) {
+            output.textContent = "Unable to retrieve greeting.";
+        }
+    }
+
+    // Custom API
+    async function loadCustom() {
+        const name = document.getElementById("customInput").value.trim();
+        const output = document.getElementById("customResult");
+
+        if (!name) {
+            output.textContent = "Please enter your first name.";
+            return;
+        }
+
+        output.textContent = "Loading custom API...";
+
+        try {
+            const response = await fetch(
+                "/jero?name=" + encodeURIComponent(name)
+            );
+
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+
+            const data = await response.json();
+            output.replaceChildren();
+
+            const pre = document.createElement("pre");
+            pre.textContent = JSON.stringify(data, null, 2);
+            output.appendChild(pre);
+
+        } catch (error) {
+            output.textContent = "Unable to retrieve custom API data.";
+        }
+    }
+
+    // Load all students from SQLite
+    async function loadStudents() {
+        const output = document.getElementById("studentList");
+        output.textContent = "Loading student records...";
+
+        try {
+            const response = await fetch("/students");
+
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+
+            const students = await response.json();
+            output.replaceChildren();
+
+            if (students.length === 0) {
+                output.textContent = "No student records found.";
                 return;
             }
 
-            greeting.textContent = "Loading greeting...";
+            students.forEach(student => {
+                const item = document.createElement("div");
+                item.className = "student";
 
-            try {
-                const response = await fetch(
-                    "/hello?name=" + encodeURIComponent(name)
-                );
+                addField(item, "Database ID", student.id);
+                addField(item, "Student ID", student.student_id);
+                addField(item, "Name", student.name);
+                addField(item, "Program", student.program);
+                addField(item, "Year", student.year);
+                addField(item, "Section", student.section);
 
-                if (!response.ok) {
-                    throw new Error("Failed to retrieve greeting.");
-                }
+                output.appendChild(item);
+            });
 
-                const data = await response.json();
+        } catch (error) {
+            output.textContent = "Unable to retrieve student records.";
+        }
+    }
 
-                greeting.textContent = data.message;
+    // Find one student using /students/<id>
+    async function findStudent() {
+        const id = document.getElementById("studentDbId").value.trim();
+        const output = document.getElementById("singleStudent");
 
-            } catch (error) {
-                greeting.textContent =
-                    "Unable to retrieve greeting.";
-            }
+        if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) {
+            output.textContent = "Enter a valid database ID.";
+            return;
         }
 
+        output.textContent = "Searching for student...";
 
-        // Custom API Endpoint
-        async function loadCustom() {
-            const name = document
-                .getElementById("customInput")
-                .value
-                .trim();
+        try {
+            const response = await fetch(
+                "/students/" + encodeURIComponent(id)
+            );
 
-            const output = document.getElementById("customResult");
+            const data = await response.json();
 
-            if (!name) {
-                output.textContent =
-                    "Please enter your first name.";
+            if (!response.ok) {
+                throw new Error(data.error || "Student not found");
+            }
+
+            output.replaceChildren();
+
+            [
+                ["Database ID", data.id],
+                ["Student ID", data.student_id],
+                ["Name", data.name],
+                ["Program", data.program],
+                ["Year", data.year],
+                ["Section", data.section]
+            ].forEach(field => addField(output, field[0], field[1]));
+
+        } catch (error) {
+            output.textContent = error.message === "Student not found"
+                ? "Student not found. Try another database ID."
+                : "Unable to retrieve the selected student.";
+        }
+    }
+
+    // Additional task: filter students by program
+    async function filterStudents() {
+        const program = document.getElementById("programInput").value.trim();
+        const output = document.getElementById("programResults");
+
+        if (!program) {
+            output.textContent = "Please enter a program.";
+            return;
+        }
+
+        output.textContent = "Searching database...";
+
+        try {
+            const response = await fetch(
+                "/students/program/" + encodeURIComponent(program)
+            );
+
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+
+            const students = await response.json();
+            output.replaceChildren();
+
+            if (students.length === 0) {
+                output.textContent = "No students found for this program.";
                 return;
             }
 
-            output.textContent = "Loading custom API data...";
+            students.forEach(student => {
+                const item = document.createElement("div");
+                item.className = "student";
 
-            try {
-                const response = await fetch(
-                    "/jero?name=" + encodeURIComponent(name)
-                );
+                addField(item, "Student ID", student.student_id);
+                addField(item, "Name", student.name);
+                addField(item, "Program", student.program);
+                addField(item, "Year", student.year);
+                addField(item, "Section", student.section);
 
-                if (!response.ok) {
-                    throw new Error("Failed to retrieve custom data.");
-                }
+                output.appendChild(item);
+            });
 
-                const data = await response.json();
-
-                output.replaceChildren();
-
-                const pre = document.createElement("pre");
-                pre.textContent = JSON.stringify(data, null, 2);
-
-                output.appendChild(pre);
-
-            } catch (error) {
-                output.textContent =
-                    "Unable to retrieve custom API data. " +
-                    "Please check your endpoint.";
-            }
+        } catch (error) {
+            output.textContent = "Unable to filter student records.";
         }
-    </script>
+    }
+</script>
 
 </body>
 </html>
