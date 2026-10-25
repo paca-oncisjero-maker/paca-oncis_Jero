@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student API Interface</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 750px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f3f6fa;
+            color: #263238;
+        }
+
+        header {
+            background: #174a7e;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px #00000012;
+        }
+
+        h2 {
+            color: #174a7e;
+        }
+
+        button {
+            padding: 11px 16px;
+            background: #1769aa;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #104c80;
+        }
+
+        input {
+            padding: 11px;
+            width: 90%;
+            max-width: 350px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        #result, #greeting, #customResult {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f5f8fc;
+            border-radius: 6px;
+            overflow-wrap: anywhere;
+        }
+
+        footer {
+            text-align: center;
+            color: #666;
+            margin-top: 25px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Student API Interface</h1>
+        <p>Flask API and JavaScript Fetch Demo</p>
+    </header>
+
+    <section class="card">
+        <h2>Student Information</h2>
+        <p>Click the button to retrieve student information.</p>
+        <button onclick="loadStudent()">Load Student Information</button>
+        <div id="result" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+        <h2>Greeting API</h2>
+        <p>Enter your first name below.</p>
+        <input type="text" id="nameInput" placeholder="Enter your first name">
+        <br>
+        <button onclick="sayHello()">Say Hello</button>
+        <p id="greeting" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+        <h2>Custom API Endpoint</h2>
+        <p>Test your custom endpoint from Laboratory Activity 4.</p>
+        <input type="text" id="customInput" placeholder="Enter your first name">
+        <br>
+        <button onclick="loadCustom()">Test Custom API</button>
+        <div id="customResult" aria-live="polite"></div>
+    </section>
+
+    <footer>
+        Laboratory Activity 6 | Flask API Web Interface
+    </footer>
+
+    <script>
+        async function loadStudent() {
+            const result = document.getElementById("result");
+            result.textContent = "Loading student information...";
+
+            try {
+                const response = await fetch("/student");
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                const data = await response.json();
+                result.replaceChildren();
+
+                const fields = [
+                    ["Student ID", data.student_id],
+                    ["Name", data.name],
+                    ["Program", data.program],
+                    ["Year", data.year],
+                    ["Section", data.section]
+                ];
+
+                fields.forEach(([label, value]) => {
+                    const p = document.createElement("p");
+                    const b = document.createElement("b");
+                    b.textContent = label + ": ";
+                    p.append(b, document.createTextNode(value ?? ""));
+                    result.appendChild(p);
+                });
+            } catch (error) {
+                result.textContent = "Unable to retrieve student information.";
+            }
+        }
+
+        async function sayHello() {
+            const name = document.getElementById("nameInput").value.trim();
+            const greeting = document.getElementById("greeting");
+
+            if (!name) {
+                greeting.textContent = "Please enter your first name.";
+                return;
+            }
+
+            greeting.textContent = "Loading greeting...";
+
+            try {
+                const response = await fetch(
+                    "/hello?name=" + encodeURIComponent(name)
+                );
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                const data = await response.json();
+                greeting.textContent = data.message;
+            } catch (error) {
+                greeting.textContent = "Unable to retrieve greeting.";
+            }
+        }
+
+        async function loadCustom() {
+            const name = document.getElementById("customInput").value.trim();
+            const output = document.getElementById("customResult");
+
+            if (!name) {
+                output.textContent = "Please enter your first name.";
+                return;
+            }
+
+            output.textContent = "Loading custom API data...";
+
+            try {
+                const response = await fetch(
+                    "/jero?name=" + encodeURIComponent(name)
+                );
+
+                if (!response.ok) {
+                    throw new Error("Request failed");
+                }
+
+                const data = await response.json();
+                output.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                output.textContent =
+                    "Unable to retrieve custom API data. Check the endpoint.";
+            }
+        }
+    </script>
+</body>
+</html>

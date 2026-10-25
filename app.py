@@ -1,49 +1,43 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def home():
-    return "Welcome to Jero API!"
+    return render_template("index.html")
 
 
-@app.route('/student')
+@app.route("/student")
 def get_student():
     return jsonify({
         "student_id": "24-00115",
-        "name": "Jero Paca-oncis",
+        "name": "JERO PACA-ONCIS",
         "program": "BSIT",
         "year": 3,
-        "section": "B"
+        "section": "DIJKSTRA"
     })
 
 
-@app.route('/hello')
+@app.route("/hello")
 def say_hello():
-    name = request.args.get('name', 'Student')
-
+    name = request.args.get("name", "Student")
     return jsonify({
         "message": f"Hello, {name}!"
     })
 
-@app.route('/about')
-def about():
-    return jsonify({
-        "api_name": "My First API",
-        "description": "A simple Flask REST API",
-        "developer": "Jero Paca-oncis",
-        "version": "1.0"
-    })
 
-@app.route('/jero')
-def say_jero():
-    name = request.args.get('name', 'Student')
-
+# Example custom endpoint for the additional task
+@app.route("/jero")
+def custom_api():
+    name = request.args.get("name", "Student")
     return jsonify({
-        "message": f"Gwapo si, {name}!"
+        "message": f"Hello, {name}! Welcome to Jero.",
+        "endpoint": "/jero",
+        "activity": "Laboratory Activity 6"
     })
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
+
