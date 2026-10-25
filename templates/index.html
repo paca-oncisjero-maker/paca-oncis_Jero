@@ -1,14 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student API Interface</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            max-width: 750px;
+            max-width: 800px;
             margin: 40px auto;
             padding: 20px;
             background: #f3f6fa;
@@ -21,29 +27,35 @@
             padding: 25px;
             text-align: center;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            margin-top: 0;
         }
 
         .card {
             background: white;
-            padding: 22px;
-            margin-bottom: 20px;
+            padding: 25px;
+            margin-bottom: 22px;
             border-radius: 12px;
-            box-shadow: 0 3px 10px #00000012;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
         }
 
         h2 {
             color: #174a7e;
+            margin-top: 0;
         }
 
         button {
-            padding: 11px 16px;
+            padding: 12px 18px;
             background: #1769aa;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
+            font-size: 14px;
         }
 
         button:hover {
@@ -51,79 +63,151 @@
         }
 
         input {
-            padding: 11px;
-            width: 90%;
-            max-width: 350px;
+            padding: 12px;
+            width: 100%;
+            max-width: 400px;
             border: 1px solid #bbb;
             border-radius: 6px;
             margin-top: 8px;
+            font-size: 14px;
         }
 
-        #result, #greeting, #customResult {
-            margin-top: 15px;
-            padding: 12px;
+        #result,
+        #greeting,
+        #customResult {
+            margin-top: 18px;
+            padding: 15px;
             background: #f5f8fc;
-            border-radius: 6px;
+            border: 1px solid #dce4ee;
+            border-radius: 7px;
             overflow-wrap: anywhere;
+        }
+
+        #result:empty,
+        #greeting:empty,
+        #customResult:empty {
+            display: none;
+        }
+
+        .info {
+            line-height: 1.8;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            margin: 0;
         }
 
         footer {
             text-align: center;
             color: #666;
-            margin-top: 25px;
+            margin-top: 30px;
             font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 15px auto;
+                padding: 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            header {
+                padding: 20px 12px;
+            }
         }
     </style>
 </head>
 
 <body>
+
     <header>
         <h1>Student API Interface</h1>
         <p>Flask API and JavaScript Fetch Demo</p>
+        <p>Laboratory Activity 6</p>
     </header>
 
+    <!-- Student Information -->
     <section class="card">
         <h2>Student Information</h2>
-        <p>Click the button to retrieve student information.</p>
-        <button onclick="loadStudent()">Load Student Information</button>
-        <div id="result" aria-live="polite"></div>
+
+        <p>
+            Click the button below to retrieve your student information
+            from the Flask API.
+        </p>
+
+        <button onclick="loadStudent()">
+            Load Student Information
+        </button>
+
+        <div id="result" class="info" aria-live="polite"></div>
     </section>
 
+    <!-- Greeting API -->
     <section class="card">
         <h2>Greeting API</h2>
-        <p>Enter your first name below.</p>
-        <input type="text" id="nameInput" placeholder="Enter your first name">
+
+        <p>Enter your first name to receive a greeting.</p>
+
+        <input
+            type="text"
+            id="nameInput"
+            placeholder="Enter your first name"
+        >
+
         <br>
+
         <button onclick="sayHello()">Say Hello</button>
+
         <p id="greeting" aria-live="polite"></p>
     </section>
 
+    <!-- Custom API Endpoint -->
     <section class="card">
         <h2>Custom API Endpoint</h2>
-        <p>Test your custom endpoint from Laboratory Activity 4.</p>
-        <input type="text" id="customInput" placeholder="Enter your first name">
+
+        <p>
+            Test your custom API endpoint from your previous laboratory
+            activities.
+        </p>
+
+        <input
+            type="text"
+            id="customInput"
+            placeholder="Enter your first name"
+        >
+
         <br>
+
         <button onclick="loadCustom()">Test Custom API</button>
+
         <div id="customResult" aria-live="polite"></div>
     </section>
 
     <footer>
-        Laboratory Activity 6 | Flask API Web Interface
+        <p>Created by JERO PACA-ONCIS | BSIT 3 - DIJKSTRA</p>
     </footer>
 
     <script>
+        // Load Student Information
         async function loadStudent() {
             const result = document.getElementById("result");
+
             result.textContent = "Loading student information...";
 
             try {
                 const response = await fetch("/student");
 
                 if (!response.ok) {
-                    throw new Error("Request failed");
+                    throw new Error("Failed to retrieve student data.");
                 }
 
                 const data = await response.json();
+
                 result.replaceChildren();
 
                 const fields = [
@@ -134,24 +218,41 @@
                     ["Section", data.section]
                 ];
 
-                fields.forEach(([label, value]) => {
-                    const p = document.createElement("p");
-                    const b = document.createElement("b");
-                    b.textContent = label + ": ";
-                    p.append(b, document.createTextNode(value ?? ""));
-                    result.appendChild(p);
+                fields.forEach(function (field) {
+                    const paragraph = document.createElement("p");
+                    const label = document.createElement("strong");
+
+                    label.textContent = field[0] + ": ";
+
+                    paragraph.appendChild(label);
+                    paragraph.appendChild(
+                        document.createTextNode(
+                            field[1] ?? ""
+                        )
+                    );
+
+                    result.appendChild(paragraph);
                 });
+
             } catch (error) {
-                result.textContent = "Unable to retrieve student information.";
+                result.textContent =
+                    "Unable to retrieve student information.";
             }
         }
 
+
+        // Greeting API
         async function sayHello() {
-            const name = document.getElementById("nameInput").value.trim();
+            const name = document
+                .getElementById("nameInput")
+                .value
+                .trim();
+
             const greeting = document.getElementById("greeting");
 
             if (!name) {
-                greeting.textContent = "Please enter your first name.";
+                greeting.textContent =
+                    "Please enter your first name.";
                 return;
             }
 
@@ -163,22 +264,32 @@
                 );
 
                 if (!response.ok) {
-                    throw new Error("Request failed");
+                    throw new Error("Failed to retrieve greeting.");
                 }
 
                 const data = await response.json();
+
                 greeting.textContent = data.message;
+
             } catch (error) {
-                greeting.textContent = "Unable to retrieve greeting.";
+                greeting.textContent =
+                    "Unable to retrieve greeting.";
             }
         }
 
+
+        // Custom API Endpoint
         async function loadCustom() {
-            const name = document.getElementById("customInput").value.trim();
+            const name = document
+                .getElementById("customInput")
+                .value
+                .trim();
+
             const output = document.getElementById("customResult");
 
             if (!name) {
-                output.textContent = "Please enter your first name.";
+                output.textContent =
+                    "Please enter your first name.";
                 return;
             }
 
@@ -190,16 +301,25 @@
                 );
 
                 if (!response.ok) {
-                    throw new Error("Request failed");
+                    throw new Error("Failed to retrieve custom data.");
                 }
 
                 const data = await response.json();
-                output.textContent = JSON.stringify(data, null, 2);
+
+                output.replaceChildren();
+
+                const pre = document.createElement("pre");
+                pre.textContent = JSON.stringify(data, null, 2);
+
+                output.appendChild(pre);
+
             } catch (error) {
                 output.textContent =
-                    "Unable to retrieve custom API data. Check the endpoint.";
+                    "Unable to retrieve custom API data. " +
+                    "Please check your endpoint.";
             }
         }
     </script>
+
 </body>
 </html>
